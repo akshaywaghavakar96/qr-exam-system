@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Exam{% endblock %}
+{% block extra_style %}
+.card { max-width: 700px; }
+.question-block {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+.question-num { font-size: 12px; color: #888; margin-bottom: 6px; }
+.question-text { font-size: 17px; font-weight: 600; color: #2c2c2c; margin-bottom: 14px; }
+.option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    color: #333;
+}
+.option-label:hover { border-color: #667eea; background: #f0f2ff; }
+input[type="radio"] { accent-color: #667eea; width: 18px; height: 18px; }
+.progress { background: #e0e0e0; border-radius: 20px; height: 6px; margin-bottom: 30px; }
+.progress-bar { background: linear-gradient(135deg, #667eea, #764ba2); height: 6px; border-radius: 20px; width: 0%; transition: width 0.3s; }
+{% endblock %}
+{% block content %}
+<h1>📝 Exam</h1>
+<p class="subtitle">Answer all questions and click Submit</p>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<form method="POST" id="examForm">
+{% for i, q in enumerate(questions) %}
+<div class="question-block">
+    <div class="question-num">Question {{ i + 1 }} of {{ questions|length }}</div>
+    <div class="question-text">{{ q.question }}</div>
+    {% for opt in q.options %}
+    <label class="option-label">
+        <input type="radio" name="q{{ i }}" value="{{ opt }}" required>
+        {{ opt }}
+    </label>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<button type="submit" class="btn btn-block">Submit Exam →</button>
+</form>
+
+<script>
+// Progress bar update
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const total = {{ questions|length }};
+        const answered = new Set([...document.querySelectorAll('input[type="radio"]:checked')].map(r => r.name)).size;
+        document.getElementById('progressBar').style.width = (answered / total * 100) + '%';
+    });
+});
+
+// Confirm before submit
+document.getElementById('examForm').addEventListener('submit', function(e) {
+    const total = {{ questions|length }};
+    const answered = new Set([...document.querySelectorAll('input[type="radio"]:checked')].map(r => r.name)).size;
+    if (answered < total) {
+        if (!confirm(`You have ${total - answered} unanswered question(s). Submit anyway?`)) {
+            e.preventDefault();
+        }
+    }
+});
+</script>
+{% endblock %}
