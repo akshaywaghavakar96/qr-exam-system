@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Exam{% endblock %}
+{% block extra_style %}
+.card{max-width:700px}
+.qblock{background:#f8f9fa;border-radius:10px;padding:20px;margin-bottom:20px;border-left:4px solid #667eea}
+.qnum{font-size:12px;color:#888;margin-bottom:6px}
+.qtxt{font-size:17px;font-weight:600;color:#2c2c2c;margin-bottom:14px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid #e0e0e0;border-radius:8px;margin-bottom:8px;cursor:pointer;transition:all .2s;font-size:15px;color:#333}
+.opt:hover{border-color:#667eea;background:#f0f2ff}
+input[type=radio]{accent-color:#667eea;width:18px;height:18px;margin-bottom:0}
+.prog{background:#e0e0e0;border-radius:20px;height:6px;margin-bottom:28px}
+.prog-bar{background:linear-gradient(135deg,#667eea,#764ba2);height:6px;border-radius:20px;width:0%;transition:width .3s}
+{% endblock %}
+{% block content %}
+<h1>📝 Exam</h1>
+<p class="sub">Answer all {{ total }} questions then click Submit</p>
+<div class="prog"><div class="prog-bar" id="pb"></div></div>
+<form method="POST" id="ef">
+{% for q in questions %}
+<div class="qblock">
+  <div class="qnum">Question {{ loop.index }} of {{ total }}</div>
+  <div class="qtxt">{{ q.question }}</div>
+  {% for opt in q.options %}
+  <label class="opt">
+    <input type="radio" name="q{{ loop.index0 }}" value="{{ opt }}" required>
+    {{ opt }}
+  </label>
+  {% endfor %}
+</div>
+{% endfor %}
+<button type="submit" class="btn btn-block">Submit Exam →</button>
+</form>
+<script>
+document.querySelectorAll('input[type="radio"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    const ans=new Set([...document.querySelectorAll('input[type="radio"]:checked')].map(x=>x.name)).size;
+    document.getElementById('pb').style.width=(ans/{{total}}*100)+'%';
+  });
+});
+document.getElementById('ef').addEventListener('submit',function(e){
+  const ans=new Set([...document.querySelectorAll('input[type="radio"]:checked')].map(x=>x.name)).size;
+  if(ans<{{total}}){if(!confirm(`${{{total}}-ans} question(s) unanswered. Submit anyway?`))e.preventDefault();}
+});
+</script>
+{% endblock %}

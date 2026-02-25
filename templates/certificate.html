@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Certificate{% endblock %}
+{% block content %}
+<div style="text-align:center">
+  <div style="font-size:64px">🏆</div>
+  <h1>Certificate Ready!</h1>
+  <p class="sub">Congratulations on passing the exam!</p>
+  <div style="background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:2px solid #2c3e95;border-radius:12px;padding:30px;margin:24px 0">
+    <p style="color:#888;font-size:13px">ISSUED TO</p>
+    <p style="font-size:28px;font-weight:bold;color:#2c3e95;margin:8px 0">{{ username.upper() }}</p>
+    <p style="color:#888;font-size:13px;margin-top:16px">SCORE</p>
+    <p style="font-size:36px;font-weight:bold;color:#27ae60;margin:8px 0">{{ score }}%</p>
+    <p style="color:#aaa;font-size:12px;margin-top:10px">Certificate ID: {{ cert_id }}</p>
+  </div>
+  <a href="/download_certificate" class="btn btn-green btn-block" style="font-size:18px;padding:16px">⬇ Download Certificate (PDF)</a>
+</div>
+{% endblock %}
